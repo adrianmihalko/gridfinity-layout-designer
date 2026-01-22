@@ -501,6 +501,10 @@
       }
     }
 
+    @page {
+      margin: 8mm;
+    }
+
     @media print {
       body {
         background: #fff;
@@ -531,11 +535,23 @@
 
       .layout-panel {
         gap: 0;
+        align-items: start;
       }
 
       .layout-grid {
         padding: 0;
         background: #fff;
+        width: max-content;
+        height: max-content;
+        transform-origin: top left;
+      }
+
+      .app {
+        justify-items: start;
+      }
+
+      .app.print-landscape .layout-grid {
+        transform: rotate(90deg) translateY(-100%);
       }
     }
   </style>
@@ -1274,6 +1290,11 @@
       }
     }
 
+    function updatePrintOrientation() {
+      const isLandscape = currentCols > currentRows;
+      document.querySelector(".app").classList.toggle("print-landscape", isLandscape);
+    }
+
     function validatePlacements(placements, cols, rows) {
       const grid = createGrid(rows, cols);
       const issues = [];
@@ -1307,6 +1328,7 @@
       const issues = validatePlacements(currentPlacements, cols, rows);
       updateStats(cols, rows, currentPlacements, [], issues);
       updateAltStatus();
+      updatePrintOrientation();
     }
 
     function pruneBoxRowsFromPlacements() {
@@ -1358,6 +1380,7 @@
       renderLayout(cols, rows, placements, baseOrientation);
       updateStats(cols, rows, placements, unplaced, lockedWarnings);
       updateAltStatus();
+      updatePrintOrientation();
       persistLayout();
     }
 
@@ -1384,6 +1407,7 @@
       renderLayout(cols, rows, currentPlacements, baseOrientation);
       updateStats(cols, rows, currentPlacements, first.unplaced, first.lockedWarnings);
       updateAltStatus();
+      updatePrintOrientation();
       persistLayout();
     }
 
@@ -1464,6 +1488,7 @@
       renderLayout(cols, rows, currentPlacements, baseOrientation);
       updateStats(cols, rows, currentPlacements, [], []);
       updateAltStatus();
+      updatePrintOrientation();
       persistLayout();
     });
 
