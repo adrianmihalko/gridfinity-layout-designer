@@ -540,12 +540,7 @@
         width: max-content;
         height: max-content;
         transform-origin: top left;
-        --print-width: 100vw;
-        --print-height: 100vh;
-        --cell: min(
-          calc((var(--print-width) - (var(--cols) - 1) * var(--grid-gap)) / var(--cols)),
-          calc((var(--print-height) - (var(--rows) - 1) * var(--grid-gap)) / var(--rows))
-        );
+        --cell: var(--print-cell, var(--cell));
       }
 
       .app {
@@ -553,8 +548,6 @@
       }
 
       .app.print-landscape .layout-grid {
-        --print-width: 100vh;
-        --print-height: 100vw;
         transform: rotate(90deg) translateY(-100%);
       }
     }
@@ -1301,6 +1294,27 @@
       document.querySelector(".app").classList.toggle("print-landscape", isLandscape);
     }
 
+    function applyPrintSizing() {
+      const grid = document.getElementById("layout");
+      if (!grid) return;
+      const isLandscape = document.querySelector(".app").classList.contains("print-landscape");
+      const gap = parseInt(getComputedStyle(grid).gap, 10) || 0;
+      const cols = currentCols || 1;
+      const rows = currentRows || 1;
+      const availableWidth = (isLandscape ? window.innerHeight : window.innerWidth) - 32;
+      const availableHeight = (isLandscape ? window.innerWidth : window.innerHeight) - 32;
+      const cellByWidth = (availableWidth - (cols - 1) * gap) / cols;
+      const cellByHeight = (availableHeight - (rows - 1) * gap) / rows;
+      const cell = Math.max(4, Math.min(cellByWidth, cellByHeight));
+      grid.style.setProperty("--print-cell", `${cell}px`);
+    }
+
+    function resetPrintSizing() {
+      const grid = document.getElementById("layout");
+      if (!grid) return;
+      grid.style.removeProperty("--print-cell");
+    }
+
 
     function validatePlacements(placements, cols, rows) {
       const grid = createGrid(rows, cols);
@@ -1502,6 +1516,9 @@
     printBtn.addEventListener("click", () => {
       window.print();
     });
+
+    window.addEventListener("beforeprint", applyPrintSizing);
+    window.addEventListener("afterprint", resetPrintSizing);
 
 
     wideToggleEl.addEventListener("change", () => {
