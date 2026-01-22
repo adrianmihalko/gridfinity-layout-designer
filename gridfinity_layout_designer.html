@@ -1,0 +1,1744 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gridfinity Layout Designer</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/solid.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <style>
+    :root {
+      --ink: #0f172a;
+      --ink-soft: #1f2937;
+      --paper: #f7f2ea;
+      --accent: #e97d2f;
+      --accent-2: #2f8f83;
+      --panel: #fff7eb;
+      --shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+      --grid-gap: 4px;
+      --cell: 24px;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(233, 125, 47, 0.18), transparent),
+        radial-gradient(900px 500px at 110% 10%, rgba(47, 143, 131, 0.2), transparent),
+        linear-gradient(180deg, #fefcf8, #f5eee3 60%, #efe6d8);
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 32px 18px 60px;
+    }
+
+    .app {
+      width: min(1200px, 100%);
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1fr 1.15fr;
+      animation: rise 700ms ease;
+    }
+
+    .app.wide {
+      width: min(1500px, 100%);
+      grid-template-columns: 1fr 1.35fr;
+    }
+
+    @keyframes rise {
+      from { transform: translateY(10px); opacity: 0.7; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.1rem, 1.3rem + 2.4vw, 3.4rem);
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      max-width: 460px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-group h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.03em;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.95rem;
+    }
+
+    input[type="number"], select {
+      font-family: inherit;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(15, 23, 42, 0.2);
+      background: #fffdf7;
+      font-size: 1rem;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .box-table {
+      display: grid;
+      gap: 10px;
+    }
+
+    .box-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .toggle-row {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .box-row input[type="number"] {
+      width: 100%;
+    }
+
+    .box-row button {
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--ink-soft);
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      min-height: 32px;
+    }
+
+    .btn {
+      border: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 1rem;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(233, 125, 47, 0.3);
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid rgba(15, 23, 42, 0.2);
+      box-shadow: none;
+    }
+
+    .stats {
+      display: grid;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .utility-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .utility-row .btn,
+    .utility-row .btn.secondary {
+      font-size: 0.9rem;
+      padding: 8px 12px;
+    }
+
+    .layout-panel {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+    }
+
+    .layout-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .alt-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+
+    .alt-controls button {
+      border: 1px solid rgba(15, 23, 42, 0.2);
+      background: #fff;
+      border-radius: 999px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .layout-grid {
+      width: 100%;
+      display: grid;
+      gap: var(--grid-gap);
+      align-content: start;
+      justify-content: start;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(248, 242, 230, 0.95));
+      position: relative;
+      overflow: auto;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .layout-panel.dragging .layout-grid {
+      pointer-events: none;
+    }
+
+    .layout-panel.dragging .layout-actions {
+      pointer-events: auto;
+    }
+
+    .grid-cell {
+      width: var(--cell);
+      height: var(--cell);
+      background: rgba(15, 23, 42, 0.06);
+      border-radius: 6px;
+    }
+
+    .grid-cell.drop-ok {
+      outline: 2px dashed rgba(47, 143, 131, 0.8);
+      outline-offset: -4px;
+      background: rgba(47, 143, 131, 0.12);
+    }
+
+    .drop-preview {
+      border: 2px dashed rgba(47, 143, 131, 0.85);
+      border-radius: 12px;
+      background: rgba(47, 143, 131, 0.12);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .drop-preview.invalid {
+      border-color: rgba(185, 28, 28, 0.8);
+      background: rgba(239, 68, 68, 0.12);
+    }
+
+    .layout-grid.dragging .box {
+      pointer-events: none;
+    }
+
+    .grid-label {
+      width: var(--cell);
+      height: var(--cell);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: rgba(15, 23, 42, 0.6);
+      text-transform: uppercase;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .box {
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b0b0b;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      text-transform: uppercase;
+      position: relative;
+      isolation: isolate;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .box.selected {
+      outline: 2px solid #0f172a;
+      outline-offset: -2px;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 0 12px rgba(15, 23, 42, 0.45);
+    }
+
+    .box.shake {
+      animation: shake 260ms ease;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-2px); }
+      40% { transform: translateX(2px); }
+      60% { transform: translateX(-2px); }
+      80% { transform: translateX(2px); }
+      100% { transform: translateX(0); }
+    }
+
+    .box::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 10px;
+      border: 1px dashed rgba(15, 23, 42, 0.35);
+      pointer-events: none;
+    }
+
+    .box.locked {
+      outline: 2px solid rgba(185, 28, 28, 0.9);
+      outline-offset: -2px;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6), 0 0 10px rgba(185, 28, 28, 0.35);
+    }
+
+    .box.locked.selected {
+      outline: 3px solid rgba(15, 23, 42, 0.95);
+      outline-offset: -2px;
+      box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.9),
+        0 0 0 5px rgba(185, 28, 28, 0.75),
+        0 0 14px rgba(15, 23, 42, 0.5);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+    }
+
+    .readme {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    .readme h3 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      color: var(--ink);
+    }
+
+    .readme ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .app-footer {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+    }
+
+    .app-footer a,
+    .app-footer a:visited {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .layout-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .action-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px dashed rgba(15, 23, 42, 0.4);
+      color: rgba(15, 23, 42, 0.7);
+      background: rgba(255, 255, 255, 0.7);
+      transition: all 160ms ease;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .action-pill button {
+      border: none;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .lock-action {
+      cursor: pointer;
+    }
+
+    .basket.drag-ok {
+      border-color: #b91c1c;
+      color: #b91c1c;
+      background: rgba(239, 68, 68, 0.12);
+    }
+
+    .lock-action.active {
+      border-color: rgba(47, 143, 131, 0.7);
+      color: rgba(15, 23, 42, 0.9);
+      background: rgba(47, 143, 131, 0.15);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend i {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .warning {
+      color: #7f1d1d;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      header,
+      .controls,
+      .layout-actions,
+      .legend {
+        display: none !important;
+      }
+
+      .app {
+        width: 100%;
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Gridfinity Box Layout Studio</h1>
+        <p>Dial in your baseplate, list box sizes, and let the planner find the best fit on the grid.</p>
+      </div>
+      <div class="header-actions">
+        <label class="toggle">
+          <input type="checkbox" id="wide-toggle" />
+          Wide layout
+        </label>
+      </div>
+    </header>
+
+    <section class="panel controls">
+      <div class="field-group">
+        <h2>Baseplate</h2>
+        <div class="row">
+          <label>
+            Columns (X)
+            <input type="number" id="cols" min="1" value="8" />
+          </label>
+          <label>
+            Rows (Y)
+            <input type="number" id="rows" min="1" value="6" />
+          </label>
+        </div>
+        <label>
+          Orientation
+          <select id="base-orientation">
+            <option value="horizontal" selected>Horizontal</option>
+            <option value="vertical">Vertical</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="field-group">
+        <h2>Boxes</h2>
+        <div class="stats">Footprint only (X by Y). Vertical height is ignored.</div>
+        <div class="box-table" id="box-table">
+          <div class="box-row" data-row="0">
+            <label>
+              Width (X)
+              <input type="number" min="1" value="2" />
+            </label>
+            <label>
+              Height (Y)
+              <input type="number" min="1" value="3" />
+            </label>
+            <label>
+              Minimum count
+              <input type="number" min="0" value="2" />
+            </label>
+            <div class="toggle-row">
+              <label class="toggle">
+                <input type="checkbox" checked />
+                Allow rotate
+              </label>
+              <label class="toggle">
+                <input type="checkbox" />
+                Fill remainder
+              </label>
+            </div>
+            <button type="button" class="remove" aria-label="Remove row">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+          <div class="box-row" data-row="1">
+            <label>
+              Width (X)
+              <input type="number" min="1" value="1" />
+            </label>
+            <label>
+              Height (Y)
+              <input type="number" min="1" value="2" />
+            </label>
+            <label>
+              Minimum count
+              <input type="number" min="0" value="3" />
+            </label>
+            <div class="toggle-row">
+              <label class="toggle">
+                <input type="checkbox" checked />
+                Allow rotate
+              </label>
+              <label class="toggle">
+                <input type="checkbox" />
+                Fill remainder
+              </label>
+            </div>
+            <button type="button" class="remove" aria-label="Remove row">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+        <button class="btn secondary" type="button" id="add-row">Add box</button>
+      </div>
+
+      <div class="field-group">
+        <h2>Planner</h2>
+        <button class="btn" type="button" id="run">Generate layout</button>
+        <div class="utility-row">
+        <button class="btn secondary" type="button" id="export-layout">
+          <i class="fa-solid fa-file-arrow-up"></i>
+          Export JSON
+        </button>
+        <button class="btn secondary" type="button" id="import-layout">
+          <i class="fa-solid fa-file-arrow-down"></i>
+          Import JSON
+        </button>
+        <button class="btn secondary" type="button" id="reset-layout">
+          <i class="fa-solid fa-rotate-left"></i>
+          Reset layout
+        </button>
+        <button class="btn secondary" type="button" id="print-layout">
+          <i class="fa-solid fa-print"></i>
+          Print
+        </button>
+        </div>
+        <div class="stats" id="stats"></div>
+        <div id="warnings"></div>
+      </div>
+    </section>
+
+    <section class="panel layout-panel">
+      <div class="layout-header">
+        <div class="stats" id="layout-title"></div>
+        <div class="alt-controls">
+          <button type="button" id="prev-layout" aria-label="Previous layout">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span id="alt-status">Option 1 of 1</span>
+          <button type="button" id="next-layout" aria-label="Next layout">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      <div class="layout-grid" id="layout"></div>
+      <div class="layout-actions">
+        <div class="action-pill basket" id="basket">
+          <i class="fa-solid fa-trash-can"></i>
+          Delete selected
+        </div>
+        <div class="action-pill lock-action" id="lock-selected">
+          <button type="button" id="lock-toggle">
+            <i class="fa-solid fa-lock"></i>
+            Lock selected
+          </button>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="panel readme">
+      <h3>Readme</h3>
+      <ul>
+        <li>Baseplate: set columns (X), rows (Y), and orientation; layout updates automatically.</li>
+        <li>Boxes: define footprint (X by Y), minimum count, rotation allowance, and fill remainder per type.</li>
+        <li>Generate layout: creates multiple layout options; use arrows to cycle.</li>
+        <li>Selection: click to select; Shift-click to select a range (row/column order).</li>
+        <li>Drag: click, drag, and release to move selected boxes with magnetic snapping.</li>
+        <li>Locked boxes: red outline glow; selection remains visible with a stronger outline.</li>
+        <li>Lock toggle: button locks/unlocks all selected boxes in one action.</li>
+        <li>Rotate: right-click a box to rotate; if blocked, it shakes and stays put.</li>
+        <li>Delete: use Delete selected or Backspace to remove selected unlocked boxes.</li>
+        <li>Box row cleanup: if a type has no boxes left, its row is removed automatically.</li>
+        <li>Persistence: changes auto-save locally and reload on refresh.</li>
+        <li>Import/Export: save and restore layout JSON; Print outputs a clean grid view.</li>
+        <li>Reset: clears all placed boxes while keeping your baseplate and box settings.</li>
+      </ul>
+    </section>
+    <footer class="app-footer">❤️ <a href="https://adrianmihalko.eu">adrianmihalko.eu</a></footer>
+  </div>
+
+  <script>
+    const layoutEl = document.getElementById("layout");
+    const statsEl = document.getElementById("stats");
+    const warningsEl = document.getElementById("warnings");
+    const legendEl = document.getElementById("legend");
+    const layoutTitleEl = document.getElementById("layout-title");
+    const basketEl = document.getElementById("basket");
+    const layoutPanelEl = document.querySelector(".layout-panel");
+    const wideToggleEl = document.getElementById("wide-toggle");
+    const lockSelectedEl = document.getElementById("lock-selected");
+    const lockToggleBtn = document.getElementById("lock-toggle");
+    const exportBtn = document.getElementById("export-layout");
+    const importBtn = document.getElementById("import-layout");
+    const resetBtn = document.getElementById("reset-layout");
+    const printBtn = document.getElementById("print-layout");
+    const altStatusEl = document.getElementById("alt-status");
+    const prevLayoutBtn = document.getElementById("prev-layout");
+    const nextLayoutBtn = document.getElementById("next-layout");
+    let currentPlacements = [];
+    let currentCols = 0;
+    let currentRows = 0;
+    let dragId = null;
+    let dropPreviewEls = [];
+    let lastDragTarget = null;
+    let isPointerDragging = false;
+    let dragPointerId = null;
+    let suppressClick = false;
+    let pendingDrag = null;
+    let lastSelectedId = null;
+    const selectedIds = new Set();
+    let alternatives = [];
+    let currentAltIndex = 0;
+
+    const palette = [
+      "#f5a55f",
+      "#5fb0a0",
+      "#f3c77b",
+      "#8cc0d0",
+      "#f08a5d",
+      "#7abf6b",
+      "#c7a4d8",
+      "#f2b5d4"
+    ];
+
+    const boxTable = document.getElementById("box-table");
+    document.getElementById("add-row").addEventListener("click", () => {
+      const row = document.createElement("div");
+      row.className = "box-row";
+      row.innerHTML = `
+        <label>
+          Width (X)
+          <input type="number" min="1" value="1" />
+        </label>
+        <label>
+          Height (Y)
+          <input type="number" min="1" value="1" />
+        </label>
+        <label>
+          Minimum count
+          <input type="number" min="0" value="1" />
+        </label>
+        <div class="toggle-row">
+          <label class="toggle">
+            <input type="checkbox" checked />
+            Allow rotate
+          </label>
+          <label class="toggle">
+            <input type="checkbox" />
+            Fill remainder
+          </label>
+        </div>
+        <button type="button" class="remove" aria-label="Remove row">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      `;
+      boxTable.appendChild(row);
+      runPlanner({ keepManual: true });
+    });
+
+    boxTable.addEventListener("click", (event) => {
+      const removeBtn = event.target.closest(".remove");
+      if (removeBtn) {
+        const rows = boxTable.querySelectorAll(".box-row");
+        if (rows.length > 1) {
+          removeBtn.closest(".box-row").remove();
+          runPlanner({ keepManual: true });
+        }
+      }
+    });
+
+    function readInputs() {
+      const colsInput = parseInt(document.getElementById("cols").value, 10) || 1;
+      const rowsInput = parseInt(document.getElementById("rows").value, 10) || 1;
+      const baseOrientation = document.getElementById("base-orientation").value;
+
+      const cols = Math.max(1, colsInput);
+      const rows = Math.max(1, rowsInput);
+      const finalCols = baseOrientation === "vertical" ? rows : cols;
+      const finalRows = baseOrientation === "vertical" ? cols : rows;
+
+      const boxes = [];
+      const fillers = [];
+      const rowEls = boxTable.querySelectorAll(".box-row");
+      rowEls.forEach((row, index) => {
+        const inputs = row.querySelectorAll("input");
+        const w = Math.max(1, parseInt(inputs[0].value, 10) || 1);
+        const h = Math.max(1, parseInt(inputs[1].value, 10) || 1);
+        const count = Math.max(0, parseInt(inputs[2].value, 10) || 0);
+        const rotatable = inputs[3].checked;
+        const fillRemainder = inputs[4].checked;
+        for (let i = 0; i < count; i += 1) {
+          boxes.push({ id: `${index + 1}-${i + 1}`, w, h, rotatable, sizeIndex: index });
+        }
+        if (fillRemainder) {
+          fillers.push({ w, h, rotatable, sizeIndex: index });
+        }
+      });
+
+      return { cols: finalCols, rows: finalRows, boxes, fillers, baseOrientation };
+    }
+
+    function readRawConfig() {
+      const colsInput = parseInt(document.getElementById("cols").value, 10) || 1;
+      const rowsInput = parseInt(document.getElementById("rows").value, 10) || 1;
+      const baseOrientation = document.getElementById("base-orientation").value;
+      const rowEls = boxTable.querySelectorAll(".box-row");
+      const boxRows = Array.from(rowEls).map((row) => {
+        const inputs = row.querySelectorAll("input");
+        return {
+          w: Math.max(1, parseInt(inputs[0].value, 10) || 1),
+          h: Math.max(1, parseInt(inputs[1].value, 10) || 1),
+          minCount: Math.max(0, parseInt(inputs[2].value, 10) || 0),
+          rotatable: inputs[3].checked,
+          fillRemainder: inputs[4].checked
+        };
+      });
+      return { colsInput, rowsInput, baseOrientation, boxRows };
+    }
+
+    function rebuildBoxTable(boxRows) {
+      boxTable.innerHTML = "";
+      boxRows.forEach((row) => {
+        const item = document.createElement("div");
+        item.className = "box-row";
+        item.innerHTML = `
+          <label>
+            Width (X)
+            <input type="number" min="1" value="${row.w}" />
+          </label>
+          <label>
+            Height (Y)
+            <input type="number" min="1" value="${row.h}" />
+          </label>
+          <label>
+            Minimum count
+            <input type="number" min="0" value="${row.minCount}" />
+          </label>
+          <div class="toggle-row">
+            <label class="toggle">
+              <input type="checkbox" ${row.rotatable ? "checked" : ""} />
+              Allow rotate
+            </label>
+            <label class="toggle">
+              <input type="checkbox" ${row.fillRemainder ? "checked" : ""} />
+              Fill remainder
+            </label>
+          </div>
+          <button type="button" class="remove" aria-label="Remove row">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        `;
+        boxTable.appendChild(item);
+      });
+    }
+
+    function createGrid(rows, cols) {
+      const grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => null));
+      return grid;
+    }
+
+    function fits(grid, x, y, w, h) {
+      const rows = grid.length;
+      const cols = grid[0].length;
+      if (x + w > cols || y + h > rows) return false;
+      for (let r = y; r < y + h; r += 1) {
+        for (let c = x; c < x + w; c += 1) {
+          if (grid[r][c] !== null) return false;
+        }
+      }
+      return true;
+    }
+
+    function placeBox(grid, x, y, w, h, boxId) {
+      for (let r = y; r < y + h; r += 1) {
+        for (let c = x; c < x + w; c += 1) {
+          grid[r][c] = boxId;
+        }
+      }
+    }
+
+    function planLayout(cols, rows, boxes, fillers, lockedPlacements = []) {
+      const grid = createGrid(rows, cols);
+      const placements = [];
+      const unplaced = [];
+      const lockedIds = new Set();
+      const lockedWarnings = [];
+
+      lockedPlacements.forEach((box) => {
+        if (box.x + box.w > cols || box.y + box.h > rows) {
+          lockedWarnings.push(`${box.label} (out of bounds)`);
+          return;
+        }
+        if (!fits(grid, box.x, box.y, box.w, box.h)) {
+          lockedWarnings.push(`${box.label} (overlap)`);
+          return;
+        }
+        lockedIds.add(box.id);
+        placeBox(grid, box.x, box.y, box.w, box.h, box.id);
+        placements.push({ ...box, locked: true });
+      });
+
+      const ordered = [...boxes].sort((a, b) => (b.w * b.h) - (a.w * a.h));
+
+      ordered.forEach((box) => {
+        if (lockedIds.has(box.id)) return;
+        let placed = false;
+        let chosen = null;
+
+        for (let y = 0; y < rows && !placed; y += 1) {
+          for (let x = 0; x < cols && !placed; x += 1) {
+            if (fits(grid, x, y, box.w, box.h)) {
+              chosen = { x, y, w: box.w, h: box.h };
+              placed = true;
+            } else if (box.rotatable && box.w !== box.h && fits(grid, x, y, box.h, box.w)) {
+              chosen = { x, y, w: box.h, h: box.w };
+              placed = true;
+            }
+          }
+        }
+
+        if (placed && chosen) {
+          const id = box.id;
+          placeBox(grid, chosen.x, chosen.y, chosen.w, chosen.h, id);
+          placements.push({ ...chosen, id, label: `${box.w}x${box.h}`, sizeIndex: box.sizeIndex });
+        } else {
+          unplaced.push(`${box.w}x${box.h}`);
+        }
+      });
+
+      const fillerOrdered = [...fillers].sort((a, b) => (b.w * b.h) - (a.w * a.h));
+      fillerOrdered.forEach((box) => {
+        let foundSpot = true;
+        let fillerIndex = 0;
+        while (foundSpot) {
+          foundSpot = false;
+          let chosen = null;
+          for (let y = 0; y < rows && !foundSpot; y += 1) {
+            for (let x = 0; x < cols && !foundSpot; x += 1) {
+              if (fits(grid, x, y, box.w, box.h)) {
+                chosen = { x, y, w: box.w, h: box.h };
+                foundSpot = true;
+              } else if (box.rotatable && box.w !== box.h && fits(grid, x, y, box.h, box.w)) {
+                chosen = { x, y, w: box.h, h: box.w };
+                foundSpot = true;
+              }
+            }
+          }
+          if (foundSpot && chosen) {
+            const id = `f-${box.sizeIndex}-${fillerIndex}`;
+            fillerIndex += 1;
+            placeBox(grid, chosen.x, chosen.y, chosen.w, chosen.h, id);
+            placements.push({ ...chosen, id, label: `${box.w}x${box.h}`, sizeIndex: box.sizeIndex });
+          }
+        }
+      });
+
+      return { grid, placements, unplaced, lockedWarnings };
+    }
+
+    function shuffleCopy(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function planLayoutVariant(cols, rows, boxes, fillers, lockedPlacements = []) {
+      const randomized = shuffleCopy(boxes).sort((a, b) => {
+        const areaDiff = (b.w * b.h) - (a.w * a.h);
+        if (areaDiff !== 0) return areaDiff;
+        return Math.random() - 0.5;
+      });
+      const randomizedFillers = shuffleCopy(fillers);
+      return planLayout(cols, rows, randomized, randomizedFillers, lockedPlacements);
+    }
+
+    function buildGridFromPlacements(placements, rows, cols, ignoreIds = null) {
+      const ignoreSet = new Set();
+      if (Array.isArray(ignoreIds)) {
+        ignoreIds.forEach((id) => ignoreSet.add(id));
+      } else if (ignoreIds) {
+        ignoreSet.add(ignoreIds);
+      }
+      const grid = createGrid(rows, cols);
+      placements.forEach((box) => {
+        if (ignoreSet.has(box.id)) return;
+        placeBox(grid, box.x, box.y, box.w, box.h, box.id);
+      });
+      return grid;
+    }
+
+    function getDropTargetFromEvent(event) {
+      const layoutRect = layoutEl.getBoundingClientRect();
+      if (
+        event.clientX < layoutRect.left ||
+        event.clientX > layoutRect.right ||
+        event.clientY < layoutRect.top ||
+        event.clientY > layoutRect.bottom
+      ) {
+        return null;
+      }
+      const hit = document.elementFromPoint(event.clientX, event.clientY);
+      const cell = hit ? hit.closest(".grid-cell") : null;
+      if (cell) {
+        return {
+          x: parseInt(cell.dataset.x, 10),
+          y: parseInt(cell.dataset.y, 10)
+        };
+      }
+      const firstCell = layoutEl.querySelector(".grid-cell");
+      if (!firstCell) return null;
+      const style = getComputedStyle(layoutEl);
+      const cellSize = parseInt(style.getPropertyValue("--cell"), 10) || 0;
+      const gap = parseInt(style.gap, 10) || 0;
+      const step = cellSize + gap;
+      if (!cellSize || !step) return null;
+      const cellRect = firstCell.getBoundingClientRect();
+      const relX = event.clientX - cellRect.left;
+      const relY = event.clientY - cellRect.top;
+      const col = Math.round(relX / step);
+      const row = Math.round(relY / step);
+      const x = Math.max(0, Math.min(currentCols - 1, col));
+      const y = Math.max(0, Math.min(currentRows - 1, row));
+      return { x, y };
+    }
+
+    function clearDragPreview() {
+      dropPreviewEls.forEach((el) => el.remove());
+      dropPreviewEls = [];
+    }
+
+    function findNearestFit(grid, startX, startY, w, h) {
+      if (fits(grid, startX, startY, w, h)) return { x: startX, y: startY };
+      const maxRadius = Math.max(currentCols, currentRows);
+      for (let r = 1; r <= maxRadius; r += 1) {
+        for (let dy = -r; dy <= r; dy += 1) {
+          for (let dx = -r; dx <= r; dx += 1) {
+            if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
+            const x = startX + dx;
+            const y = startY + dy;
+            if (x < 0 || y < 0 || x >= currentCols || y >= currentRows) continue;
+            if (fits(grid, x, y, w, h)) return { x, y };
+          }
+        }
+      }
+      return null;
+    }
+
+    function fitsGroup(grid, placements, anchorId, targetX, targetY) {
+      const anchor = placements.find((box) => box.id === anchorId);
+      if (!anchor) return false;
+      const deltaX = targetX - anchor.x;
+      const deltaY = targetY - anchor.y;
+      for (const box of placements) {
+        const nextX = box.x + deltaX;
+        const nextY = box.y + deltaY;
+        if (nextX < 0 || nextY < 0 || nextX + box.w > currentCols || nextY + box.h > currentRows) {
+          return false;
+        }
+        if (!fits(grid, nextX, nextY, box.w, box.h)) {
+          return false;
+        }
+      }
+      return { deltaX, deltaY };
+    }
+
+    function findNearestFitForGroup(grid, placements, anchorId, startX, startY) {
+      const anchor = placements.find((box) => box.id === anchorId);
+      if (!anchor) return null;
+      const direct = fitsGroup(grid, placements, anchorId, startX, startY);
+      if (direct) return { x: startX, y: startY, ...direct };
+      const maxRadius = Math.max(currentCols, currentRows);
+      for (let r = 1; r <= maxRadius; r += 1) {
+        for (let dy = -r; dy <= r; dy += 1) {
+          for (let dx = -r; dx <= r; dx += 1) {
+            if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
+            const x = startX + dx;
+            const y = startY + dy;
+            if (x < 0 || y < 0 || x >= currentCols || y >= currentRows) continue;
+            const hit = fitsGroup(grid, placements, anchorId, x, y);
+            if (hit) return { x, y, ...hit };
+          }
+        }
+      }
+      return null;
+    }
+
+    function renderLayout(cols, rows, placements, baseOrientation) {
+      layoutEl.innerHTML = "";
+      legendEl.innerHTML = "";
+      warningsEl.innerHTML = "";
+
+      const gridCols = cols + 1;
+      const gridRows = rows + 1;
+      layoutEl.style.gridTemplateColumns = `repeat(${gridCols}, var(--cell))`;
+      layoutEl.style.gridTemplateRows = `repeat(${gridRows}, var(--cell))`;
+
+      const containerWidth = layoutEl.clientWidth;
+      const maxCell = 36;
+      const gap = parseInt(getComputedStyle(layoutEl).gap, 10) || 0;
+      const available = containerWidth - (gap * (gridCols - 1));
+      const computedCell = Math.max(18, Math.min(maxCell, Math.floor(available / gridCols)));
+      layoutEl.style.setProperty("--cell", `${computedCell}px`);
+
+      const corner = document.createElement("div");
+      corner.className = "grid-label";
+      corner.style.gridColumn = "1";
+      corner.style.gridRow = "1";
+      layoutEl.appendChild(corner);
+
+      for (let c = 1; c <= cols; c += 1) {
+        const label = document.createElement("div");
+        label.className = "grid-label";
+        label.textContent = `X${c}`;
+        label.style.gridColumn = `${c + 1}`;
+        label.style.gridRow = "1";
+        layoutEl.appendChild(label);
+      }
+
+      for (let r = 1; r <= rows; r += 1) {
+        const label = document.createElement("div");
+        label.className = "grid-label";
+        label.textContent = `Y${r}`;
+        label.style.gridColumn = "1";
+        label.style.gridRow = `${r + 1}`;
+        layoutEl.appendChild(label);
+        for (let c = 1; c <= cols; c += 1) {
+          const cell = document.createElement("div");
+          cell.className = "grid-cell";
+          cell.style.gridColumn = `${c + 1}`;
+          cell.style.gridRow = `${r + 1}`;
+          cell.dataset.x = `${c - 1}`;
+          cell.dataset.y = `${r - 1}`;
+          layoutEl.appendChild(cell);
+        }
+      }
+
+      placements.forEach((box, index) => {
+        const block = document.createElement("div");
+        block.className = "box";
+        if (box.locked) {
+          block.classList.add("locked");
+        }
+        if (selectedIds.has(box.id)) {
+          block.classList.add("selected");
+        }
+        const color = palette[box.sizeIndex % palette.length];
+        block.style.background = color;
+        block.style.gridColumn = `${box.x + 2} / span ${box.w}`;
+        block.style.gridRow = `${box.y + 2} / span ${box.h}`;
+        block.textContent = box.label;
+        block.dataset.id = box.id;
+        layoutEl.appendChild(block);
+
+        const legendItem = document.createElement("span");
+        const swatch = document.createElement("i");
+        swatch.style.background = color;
+        legendItem.appendChild(swatch);
+        legendItem.appendChild(document.createTextNode(`${box.label}`));
+        legendEl.appendChild(legendItem);
+      });
+
+      layoutTitleEl.textContent = `Layout: ${cols} x ${rows} (${baseOrientation})`;
+    }
+
+    function updateSelectionStyles() {
+      layoutEl.querySelectorAll(".box").forEach((box) => {
+        if (selectedIds.has(box.dataset.id)) {
+          box.classList.add("selected");
+        } else {
+          box.classList.remove("selected");
+        }
+      });
+      const selected = currentPlacements.filter((box) => selectedIds.has(box.id));
+      const hasSelection = selected.length > 0;
+      const allLocked = hasSelection && selected.every((box) => box.locked);
+      lockSelectedEl.classList.toggle("active", hasSelection);
+      lockToggleBtn.innerHTML = allLocked
+        ? '<i class="fa-solid fa-unlock"></i> Unlock selected'
+        : '<i class="fa-solid fa-lock"></i> Lock selected';
+    }
+
+    function getOrderedPlacements() {
+      return [...currentPlacements].sort((a, b) => {
+        if (a.y !== b.y) return a.y - b.y;
+        if (a.x !== b.x) return a.x - b.x;
+        return a.id.localeCompare(b.id);
+      });
+    }
+
+    function selectBox(id, useRange) {
+      if (useRange && lastSelectedId) {
+        const ordered = getOrderedPlacements();
+        const startIndex = ordered.findIndex((item) => item.id === lastSelectedId);
+        const endIndex = ordered.findIndex((item) => item.id === id);
+        if (startIndex !== -1 && endIndex !== -1) {
+          const [from, to] = startIndex < endIndex ? [startIndex, endIndex] : [endIndex, startIndex];
+          selectedIds.clear();
+          for (let i = from; i <= to; i += 1) {
+            selectedIds.add(ordered[i].id);
+          }
+        } else {
+          selectedIds.add(id);
+        }
+      } else if (useRange) {
+        selectedIds.add(id);
+      } else {
+        selectedIds.clear();
+        selectedIds.add(id);
+      }
+      lastSelectedId = id;
+      updateSelectionStyles();
+    }
+
+    function updateStats(cols, rows, placements, unplaced, lockedWarnings = []) {
+      const totalCells = cols * rows;
+      const usedCells = placements.reduce((sum, b) => sum + (b.w * b.h), 0);
+      const fill = ((usedCells / totalCells) * 100).toFixed(1);
+
+      statsEl.innerHTML = `
+        <div>Total cells: ${totalCells}</div>
+        <div>Used cells: ${usedCells} (${fill}%)</div>
+        <div>Placed boxes: ${placements.length}</div>
+      `;
+
+      const warnings = [];
+      if (unplaced.length) {
+        warnings.push(`Unplaced boxes: ${unplaced.join(", ")}`);
+      }
+      if (lockedWarnings.length) {
+        warnings.push(`Locked boxes skipped: ${lockedWarnings.join(", ")}`);
+      }
+      if (warnings.length) {
+        warningsEl.innerHTML = `<div class="warning">${warnings.join("<br />")}</div>`;
+      }
+    }
+
+    function validatePlacements(placements, cols, rows) {
+      const grid = createGrid(rows, cols);
+      const issues = [];
+      placements.forEach((box) => {
+        if (box.x + box.w > cols || box.y + box.h > rows) {
+          issues.push(`${box.label} (out of bounds)`);
+          return;
+        }
+        if (!fits(grid, box.x, box.y, box.w, box.h)) {
+          issues.push(`${box.label} (overlap)`);
+          return;
+        }
+        placeBox(grid, box.x, box.y, box.w, box.h, box.id);
+      });
+      return issues;
+    }
+
+    function applySavedLayout(state) {
+      if (!state) return;
+      document.getElementById("cols").value = state.colsInput || 1;
+      document.getElementById("rows").value = state.rowsInput || 1;
+      document.getElementById("base-orientation").value = state.baseOrientation || "horizontal";
+      rebuildBoxTable(state.boxRows || []);
+      const { cols, rows, baseOrientation } = readInputs();
+      currentCols = cols;
+      currentRows = rows;
+      currentPlacements = Array.isArray(state.placements) ? state.placements : [];
+      alternatives = [{ placements: currentPlacements, unplaced: [], lockedWarnings: [] }];
+      currentAltIndex = 0;
+      renderLayout(cols, rows, currentPlacements, baseOrientation);
+      const issues = validatePlacements(currentPlacements, cols, rows);
+      updateStats(cols, rows, currentPlacements, [], issues);
+      updateAltStatus();
+    }
+
+    function pruneBoxRowsFromPlacements() {
+      const raw = readRawConfig();
+      if (!raw.boxRows.length) return;
+      const usedIndices = new Set(currentPlacements.map((box) => box.sizeIndex));
+      const keptRows = raw.boxRows.filter((row, index) => usedIndices.has(index));
+      if (keptRows.length === raw.boxRows.length) return;
+      const indexMap = new Map();
+      let newIndex = 0;
+      raw.boxRows.forEach((row, index) => {
+        if (usedIndices.has(index)) {
+          indexMap.set(index, newIndex);
+          newIndex += 1;
+        }
+      });
+      currentPlacements.forEach((box) => {
+        if (indexMap.has(box.sizeIndex)) {
+          box.sizeIndex = indexMap.get(box.sizeIndex);
+        }
+      });
+      rebuildBoxTable(keptRows);
+    }
+
+    function persistLayout() {
+      const raw = readRawConfig();
+      const payload = {
+        version: 1,
+        ...raw,
+        placements: currentPlacements
+      };
+      localStorage.setItem("gridfinity-layout", JSON.stringify(payload));
+    }
+
+    function runPlanner({ keepLocks = false, keepManual = false } = {}) {
+      const { cols, rows, boxes, fillers, baseOrientation } = readInputs();
+      let lockedPlacements = [];
+      if (keepManual) {
+        lockedPlacements = currentPlacements.map((box) => ({ ...box, locked: true }));
+      } else if (keepLocks) {
+        lockedPlacements = currentPlacements.filter((box) => box.locked);
+      }
+      const { placements, unplaced, lockedWarnings } = planLayout(cols, rows, boxes, fillers, lockedPlacements);
+      currentPlacements = placements;
+      currentCols = cols;
+      currentRows = rows;
+      alternatives = [{ placements, unplaced, lockedWarnings }];
+      currentAltIndex = 0;
+      renderLayout(cols, rows, placements, baseOrientation);
+      updateStats(cols, rows, placements, unplaced, lockedWarnings);
+      updateAltStatus();
+      persistLayout();
+    }
+
+    function runPlannerAlternatives({ keepLocks = false, count = 3 } = {}) {
+      const { cols, rows, boxes, fillers, baseOrientation } = readInputs();
+      const lockedPlacements = keepLocks ? currentPlacements.filter((box) => box.locked) : [];
+      const nextAlternatives = [];
+      for (let i = 0; i < count; i += 1) {
+        const { placements, unplaced, lockedWarnings } = planLayoutVariant(
+          cols,
+          rows,
+          boxes,
+          fillers,
+          lockedPlacements
+        );
+        nextAlternatives.push({ placements, unplaced, lockedWarnings });
+      }
+      alternatives = nextAlternatives;
+      currentAltIndex = 0;
+      const first = alternatives[0];
+      currentPlacements = first.placements;
+      currentCols = cols;
+      currentRows = rows;
+      renderLayout(cols, rows, currentPlacements, baseOrientation);
+      updateStats(cols, rows, currentPlacements, first.unplaced, first.lockedWarnings);
+      updateAltStatus();
+      persistLayout();
+    }
+
+    function updateAltStatus() {
+      altStatusEl.textContent = `Option ${currentAltIndex + 1} of ${alternatives.length || 1}`;
+    }
+
+    function selectAlternative(index) {
+      if (!alternatives.length) return;
+      const clamped = Math.max(0, Math.min(index, alternatives.length - 1));
+      currentAltIndex = clamped;
+      const alt = alternatives[clamped];
+      currentPlacements = alt.placements;
+      renderLayout(currentCols, currentRows, currentPlacements, document.getElementById("base-orientation").value);
+      updateStats(currentCols, currentRows, currentPlacements, alt.unplaced, alt.lockedWarnings);
+      updateAltStatus();
+    }
+
+    document.getElementById("run").addEventListener("click", () => runPlannerAlternatives({ keepLocks: true, count: 3 }));
+    ["cols", "rows", "base-orientation"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", () => runPlanner({ keepLocks: true }));
+      document.getElementById(id).addEventListener("change", () => runPlanner({ keepLocks: true }));
+    });
+    boxTable.addEventListener("input", () => runPlanner({ keepLocks: true }));
+    boxTable.addEventListener("change", () => runPlanner({ keepLocks: true }));
+    window.addEventListener("resize", () => runPlanner({ keepLocks: true }));
+    prevLayoutBtn.addEventListener("click", () => selectAlternative(currentAltIndex - 1));
+    nextLayoutBtn.addEventListener("click", () => selectAlternative(currentAltIndex + 1));
+
+    exportBtn.addEventListener("click", () => {
+      const raw = readRawConfig();
+      const payload = {
+        version: 1,
+        ...raw,
+        placements: currentPlacements
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "gridfinity-layout.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    importBtn.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json";
+      input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const state = JSON.parse(reader.result);
+            applySavedLayout(state);
+          } catch (err) {
+            warningsEl.innerHTML = `<div class="warning">Invalid layout file.</div>`;
+          }
+        };
+        reader.readAsText(file);
+      });
+      input.click();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      localStorage.removeItem("gridfinity-layout");
+      const { cols, rows, baseOrientation } = readInputs();
+      currentPlacements = [];
+      currentCols = cols;
+      currentRows = rows;
+      alternatives = [{ placements: [], unplaced: [], lockedWarnings: [] }];
+      currentAltIndex = 0;
+      boxTable.innerHTML = "";
+      renderLayout(cols, rows, currentPlacements, baseOrientation);
+      updateStats(cols, rows, currentPlacements, [], []);
+      updateAltStatus();
+      persistLayout();
+    });
+
+    printBtn.addEventListener("click", () => {
+      window.print();
+    });
+
+    wideToggleEl.addEventListener("change", () => {
+      document.querySelector(".app").classList.toggle("wide", wideToggleEl.checked);
+      localStorage.setItem("gridfinity-wide", wideToggleEl.checked ? "1" : "0");
+      runPlanner({ keepLocks: true });
+    });
+
+    lockSelectedEl.addEventListener("click", () => {
+      const selected = currentPlacements.filter((box) => selectedIds.has(box.id));
+      if (!selected.length) return;
+      const allLocked = selected.every((box) => box.locked);
+      selected.forEach((box) => {
+        box.locked = !allLocked;
+      });
+      if (alternatives.length) {
+        alternatives[currentAltIndex] = {
+          placements: currentPlacements,
+          unplaced: alternatives[currentAltIndex].unplaced,
+          lockedWarnings: alternatives[currentAltIndex].lockedWarnings
+        };
+      }
+      updateSelectionStyles();
+      persistLayout();
+      renderLayout(currentCols, currentRows, currentPlacements, document.getElementById("base-orientation").value);
+    });
+
+    layoutEl.addEventListener("click", (event) => {
+      if (suppressClick) {
+        suppressClick = false;
+        return;
+      }
+      const box = event.target.closest(".box");
+      if (!box) {
+        if (!event.shiftKey && selectedIds.size) {
+          selectedIds.clear();
+          lastSelectedId = null;
+          updateSelectionStyles();
+        }
+        return;
+      }
+      const id = box.dataset.id;
+      selectBox(id, event.shiftKey);
+    });
+
+    function beginPointerDrag(event, placement) {
+      isPointerDragging = true;
+      dragPointerId = event.pointerId;
+      dragId = placement.id;
+      lastDragTarget = null;
+      layoutPanelEl.classList.add("dragging");
+      event.target.setPointerCapture(event.pointerId);
+      updatePointerDrag(event);
+    }
+
+    function updatePointerDrag(event) {
+      if (!isPointerDragging || dragPointerId !== event.pointerId) return;
+      const moving = currentPlacements.find((box) => box.id === dragId);
+      if (!moving) return;
+      const target = getDropTargetFromEvent(event);
+      const selectedPlacements = currentPlacements.filter((box) => selectedIds.has(box.id) && !box.locked);
+      const activeGroup = selectedPlacements.length ? selectedPlacements : [moving];
+      const grid = buildGridFromPlacements(
+        currentPlacements,
+        currentRows,
+        currentCols,
+        activeGroup.map((box) => box.id)
+      );
+      clearDragPreview();
+      lastDragTarget = null;
+      if (!target) return;
+      const snapped = activeGroup.length > 1
+        ? findNearestFitForGroup(grid, activeGroup, moving.id, target.x, target.y)
+        : findNearestFit(grid, target.x, target.y, moving.w, moving.h);
+      if (!snapped) return;
+      const deltaX = activeGroup.length > 1 ? snapped.deltaX : (snapped.x - moving.x);
+      const deltaY = activeGroup.length > 1 ? snapped.deltaY : (snapped.y - moving.y);
+      lastDragTarget = { deltaX, deltaY };
+      activeGroup.forEach((box) => {
+        const preview = document.createElement("div");
+        preview.className = "drop-preview";
+        const nextX = box.x + deltaX;
+        const nextY = box.y + deltaY;
+        preview.style.gridColumn = `${nextX + 2} / span ${box.w}`;
+        preview.style.gridRow = `${nextY + 2} / span ${box.h}`;
+        layoutEl.appendChild(preview);
+        dropPreviewEls.push(preview);
+      });
+    }
+
+    function endPointerDrag(event) {
+      if (!isPointerDragging || dragPointerId !== event.pointerId) return;
+      isPointerDragging = false;
+      dragPointerId = null;
+      clearDragPreview();
+      layoutPanelEl.classList.remove("dragging");
+      const moving = currentPlacements.find((box) => box.id === dragId);
+      const selectedPlacements = currentPlacements.filter((box) => selectedIds.has(box.id) && !box.locked);
+      const activeGroup = moving ? (selectedPlacements.length ? selectedPlacements : [moving]) : [];
+      if (!moving || !lastDragTarget) {
+        dragId = null;
+        lastDragTarget = null;
+        return;
+      }
+      activeGroup.forEach((box) => {
+        box.x += lastDragTarget.deltaX;
+        box.y += lastDragTarget.deltaY;
+      });
+      dragId = null;
+      lastDragTarget = null;
+      if (alternatives.length) {
+        alternatives[currentAltIndex] = {
+          placements: currentPlacements,
+          unplaced: alternatives[currentAltIndex].unplaced,
+          lockedWarnings: alternatives[currentAltIndex].lockedWarnings
+        };
+      }
+      persistLayout();
+      renderLayout(currentCols, currentRows, currentPlacements, document.getElementById("base-orientation").value);
+    }
+
+    layoutEl.addEventListener("pointerdown", (event) => {
+      const box = event.target.closest(".box");
+      if (!box || event.button !== 0) return;
+      const placement = currentPlacements.find((item) => item.id === box.dataset.id);
+      if (!placement) return;
+      if (placement.locked) {
+        suppressClick = true;
+        selectBox(placement.id, event.shiftKey);
+        return;
+      }
+      if (event.shiftKey) {
+        return;
+      }
+      if (!selectedIds.has(placement.id)) {
+        selectBox(placement.id, false);
+      }
+      pendingDrag = {
+        id: placement.id,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY
+      };
+    });
+
+    layoutEl.addEventListener("pointermove", (event) => {
+      if (pendingDrag && !isPointerDragging && pendingDrag.pointerId === event.pointerId) {
+        const dx = event.clientX - pendingDrag.startX;
+        const dy = event.clientY - pendingDrag.startY;
+        const distance = Math.hypot(dx, dy);
+        if (distance > 6) {
+          const placement = currentPlacements.find((item) => item.id === pendingDrag.id);
+          if (placement) {
+            suppressClick = true;
+            beginPointerDrag(event, placement);
+            event.preventDefault();
+          }
+          pendingDrag = null;
+        }
+        return;
+      }
+      updatePointerDrag(event);
+    });
+
+    layoutEl.addEventListener("pointerup", (event) => {
+      if (isPointerDragging) {
+        endPointerDrag(event);
+        return;
+      }
+      if (pendingDrag && pendingDrag.pointerId === event.pointerId) {
+        pendingDrag = null;
+      }
+    });
+    layoutEl.addEventListener("pointercancel", (event) => {
+      pendingDrag = null;
+      endPointerDrag(event);
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key !== "Backspace") return;
+      if (!selectedIds.size) return;
+      event.preventDefault();
+      const selected = currentPlacements.filter((box) => selectedIds.has(box.id) && !box.locked);
+      if (!selected.length) return;
+      currentPlacements = currentPlacements.filter((box) => !selectedIds.has(box.id));
+      selectedIds.clear();
+      pruneBoxRowsFromPlacements();
+      if (alternatives.length) {
+        alternatives[currentAltIndex] = {
+          placements: currentPlacements,
+          unplaced: alternatives[currentAltIndex].unplaced,
+          lockedWarnings: alternatives[currentAltIndex].lockedWarnings
+        };
+      }
+      persistLayout();
+      renderLayout(currentCols, currentRows, currentPlacements, document.getElementById("base-orientation").value);
+    });
+
+    basketEl.addEventListener("click", () => {
+      if (!selectedIds.size) return;
+      const selected = currentPlacements.filter((box) => selectedIds.has(box.id) && !box.locked);
+      if (!selected.length) return;
+      currentPlacements = currentPlacements.filter((box) => !selectedIds.has(box.id));
+      selectedIds.clear();
+      pruneBoxRowsFromPlacements();
+      if (alternatives.length) {
+        alternatives[currentAltIndex] = {
+          placements: currentPlacements,
+          unplaced: alternatives[currentAltIndex].unplaced,
+          lockedWarnings: alternatives[currentAltIndex].lockedWarnings
+        };
+      }
+      persistLayout();
+      renderLayout(currentCols, currentRows, currentPlacements, document.getElementById("base-orientation").value);
+    });
+
+    layoutEl.addEventListener("dblclick", (event) => {
+      const box = event.target.closest(".box");
+      if (!box) return;
+      const placement = currentPlacements.find((item) => item.id === box.dataset.id);
+      if (!placement) return;
+      placement.locked = !placement.locked;
+      if (alternatives.length) {
+        alternatives[currentAltIndex] = {
+          placements: currentPlacements,
+          unplaced: alternatives[currentAltIndex].unplaced,
+          lockedWarnings: alternatives[currentAltIndex].lockedWarnings
+        };
+      }
+      persistLayout();
+      renderLayout(currentCols, currentRows, currentPlacements, document.getElementById("base-orientation").value);
+    });
+
+    layoutEl.addEventListener("contextmenu", (event) => {
+      const boxEl = event.target.closest(".box");
+      if (!boxEl) return;
+      event.preventDefault();
+      const placement = currentPlacements.find((item) => item.id === boxEl.dataset.id);
+      if (!placement || placement.locked) return;
+      if (placement.w === placement.h) return;
+      const grid = buildGridFromPlacements(currentPlacements, currentRows, currentCols, placement.id);
+      const nextW = placement.h;
+      const nextH = placement.w;
+      const snapped = findNearestFit(grid, placement.x, placement.y, nextW, nextH);
+      if (!snapped) {
+        boxEl.classList.remove("shake");
+        void boxEl.offsetWidth;
+        boxEl.classList.add("shake");
+        return;
+      }
+      placement.w = nextW;
+      placement.h = nextH;
+      placement.x = snapped.x;
+      placement.y = snapped.y;
+      placement.label = `${nextW}x${nextH}`;
+      if (alternatives.length) {
+        alternatives[currentAltIndex] = {
+          placements: currentPlacements,
+          unplaced: alternatives[currentAltIndex].unplaced,
+          lockedWarnings: alternatives[currentAltIndex].lockedWarnings
+        };
+      }
+      persistLayout();
+      renderLayout(currentCols, currentRows, currentPlacements, document.getElementById("base-orientation").value);
+    });
+
+    const wideSaved = localStorage.getItem("gridfinity-wide");
+    const useWide = wideSaved !== "0";
+    if (useWide) {
+      wideToggleEl.checked = true;
+      document.querySelector(".app").classList.add("wide");
+    }
+
+    const saved = localStorage.getItem("gridfinity-layout");
+    if (saved) {
+      try {
+        applySavedLayout(JSON.parse(saved));
+      } catch (err) {
+        runPlanner();
+      }
+    } else {
+      runPlanner();
+    }
+  </script>
+</body>
+</html>
