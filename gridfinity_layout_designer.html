@@ -501,10 +501,6 @@
       }
     }
 
-    @page {
-      margin: 8mm;
-    }
-
     @media print {
       body {
         background: #fff;
@@ -544,7 +540,12 @@
         width: max-content;
         height: max-content;
         transform-origin: top left;
-        transform: scale(var(--print-scale, 1));
+        --print-width: 100vw;
+        --print-height: 100vh;
+        --cell: min(
+          calc((var(--print-width) - (var(--cols) - 1) * var(--grid-gap)) / var(--cols)),
+          calc((var(--print-height) - (var(--rows) - 1) * var(--grid-gap)) / var(--rows))
+        );
       }
 
       .app {
@@ -552,6 +553,8 @@
       }
 
       .app.print-landscape .layout-grid {
+        --print-width: 100vh;
+        --print-height: 100vw;
         transform: rotate(90deg) translateY(-100%);
       }
     }
@@ -1150,6 +1153,8 @@
       const gridRows = rows + 1;
       layoutEl.style.gridTemplateColumns = `repeat(${gridCols}, var(--cell))`;
       layoutEl.style.gridTemplateRows = `repeat(${gridRows}, var(--cell))`;
+      layoutEl.style.setProperty("--cols", cols);
+      layoutEl.style.setProperty("--rows", rows);
 
       const containerWidth = layoutEl.clientWidth;
       const maxCell = 36;
@@ -1296,20 +1301,6 @@
       document.querySelector(".app").classList.toggle("print-landscape", isLandscape);
     }
 
-    function updatePrintScale() {
-      const appEl = document.querySelector(".app");
-      const grid = document.getElementById("layout");
-      if (!grid) return;
-      const isLandscape = appEl.classList.contains("print-landscape");
-      const contentWidth = grid.scrollWidth;
-      const contentHeight = grid.scrollHeight;
-      const availableWidth = window.innerWidth - 40;
-      const availableHeight = window.innerHeight - 40;
-      const fitWidth = isLandscape ? contentHeight : contentWidth;
-      const fitHeight = isLandscape ? contentWidth : contentHeight;
-      const scale = Math.min(1, availableWidth / fitWidth, availableHeight / fitHeight);
-      grid.style.setProperty("--print-scale", scale.toFixed(3));
-    }
 
     function validatePlacements(placements, cols, rows) {
       const grid = createGrid(rows, cols);
@@ -1512,13 +1503,6 @@
       window.print();
     });
 
-    window.addEventListener("beforeprint", updatePrintScale);
-    window.addEventListener("afterprint", () => {
-      const grid = document.getElementById("layout");
-      if (grid) {
-        grid.style.setProperty("--print-scale", "1");
-      }
-    });
 
     wideToggleEl.addEventListener("change", () => {
       document.querySelector(".app").classList.toggle("wide", wideToggleEl.checked);
